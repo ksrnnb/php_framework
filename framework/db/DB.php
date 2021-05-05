@@ -35,14 +35,16 @@ class DB
     public function first()
     {
         $this->run();
-        return new Collection($this->result[0]);
+
+        return (new Collection($this->result, $this->model))->first();
     }
 
     // TODO: nullに対応
-    public function where($column, $value, $operator = "=", $table = null)
+    public function where($column, $value, $operator = "=", $model = null)
     {
-        if ($table) {
-            $this->table = $table;
+        if ($model) {
+            $this->table = $this->resolveTableName($model);
+            $this->model = $model;
         }
 
         if (is_null($this->sql)) {
@@ -53,6 +55,12 @@ class DB
 
         $this->columns[$column] = $value;
         return $this;
+    }
+
+    private function resolveTableName($model)
+    {
+        // TODO: esなどへの対応
+        return lcfirst($model) . "s";
     }
 
     private function run()
@@ -70,7 +78,7 @@ class DB
     public function get()
     {
         $this->run();
-        return new Collection($this->result);
+        return new Collection($this->result, $this->model);
     }
 
     private function resolveType($value)

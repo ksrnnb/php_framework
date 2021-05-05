@@ -6,7 +6,7 @@ class HomeController extends Controller
     {
         $user = User::where('id', '1')
                     ->where('email', 'test@test.com')
-                    ->get();
+                    ->first();
 
         var_dump($user);
     }
