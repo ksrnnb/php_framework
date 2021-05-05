@@ -36,9 +36,9 @@ abstract class Model
         return self::$table ?: self::$table = self::resolveTableName();
     }
 
-    public function first($column, $value, $operator = "=")
+    public static function first($column, $value, $operator = "=")
     {
-        $this->initDB();
+        self::initDB();
 
         return self::where($column, $value, $operator)->first();
     }
