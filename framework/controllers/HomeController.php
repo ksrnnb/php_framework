@@ -4,6 +4,10 @@ class HomeController extends Controller
 {
     public function index()
     {
-        echo 'HomeController';
+        $user = User::where('id', '1')
+                    ->where('email', 'test@test.com')
+                    ->get();
+
+        var_dump($user);
     }
 }
