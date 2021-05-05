@@ -7,7 +7,6 @@ class DB
     private $modelName;
     private $columns;
     private $table;
-    private $result;
 
     // TODO: 環境変数にする
     private $host = 'db';
@@ -35,9 +34,10 @@ class DB
     // TODO: nullに対応
     public function first()
     {
-        $this->run();
+        $result = $this->run();
+        $models = $this->resolveModels($result);
 
-        return (new Collection($this->result, $this->modelName))->first();
+        return (new Collection($models))->first();
     }
 
     // TODO: nullに対応
@@ -73,13 +73,15 @@ class DB
         }
 
         $sth->execute();
-        $this->result = $sth->fetchAll(PDO::FETCH_CLASS);
+        return $sth->fetchAll(PDO::FETCH_CLASS);
     }
 
     public function get()
     {
-        $this->run();
-        return new Collection($this->result, $this->modelName);
+        $result = $this->run();
+        $models = $this->resolveModels($result);
+
+        return new Collection($models);
     }
 
     private function resolveType($value)
@@ -91,5 +93,33 @@ class DB
         ];
 
         return $types[gettype($value)];
+    }
+
+    /**
+     * 配列の要素を連想配列からモデルへ
+     */
+    private function resolveModels($properties)
+    {
+        $resolved = [];
+        foreach ($properties as $property) {
+            $resolved[] = $this->resolveModel($property);
+        }
+
+        return $resolved;
+    }
+
+    /**
+     * 連想配列からモデルへ
+     */
+    private function resolveModel($property)
+    {
+        $class = $this->modelName;
+
+        $model = new $class();
+        foreach ($property as $key => $value) {
+            $model->$key = $value;
+        }
+
+        return $model;
     }
 }
