@@ -6,4 +6,9 @@ class User extends Model
     {
         echo 'test';
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 }
