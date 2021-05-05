@@ -1,5 +1,8 @@
 FROM php:7.4-fpm-alpine3.13
 
-RUN apk update && apk add vim
+RUN apk update && apk add \
+mariadb-client \
+php7-pdo_mysql \
+vim
 
 WORKDIR /var/www/framework
