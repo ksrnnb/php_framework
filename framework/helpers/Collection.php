@@ -3,26 +3,29 @@
 class Collection
 {
     private $models = [];
-    private $talbe;
+    private $name;
 
     public function __construct($properties, $model_name)
     {
-        $this->resolveModels($properties, $model_name);
+        $this->name = $model_name;
+        $this->resolveModels($properties);
     }
 
-    private function resolveModels($properties, $model_name)
+    private function resolveModels($properties)
     {
         $resolved = [];
         foreach ($properties as $property) {
-            $resolved[] = $this->resolveModel($property, $model_name);
+            $resolved[] = $this->resolveModel($property);
         }
 
         $this->models = $resolved;
     }
 
-    private function resolveModel($property, $model_name)
+    private function resolveModel($property)
     {
-        $model = new $model_name();
+        $class = $this->name;
+
+        $model = new $class();
         foreach ($property as $key => $value) {
             $model->$key = $value;
         }

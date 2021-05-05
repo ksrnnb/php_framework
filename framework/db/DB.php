@@ -4,6 +4,7 @@ class DB
 {
     private $sql;
     private $pdo;
+    private $modelName;
     private $columns;
     private $table;
     private $result;
@@ -36,15 +37,15 @@ class DB
     {
         $this->run();
 
-        return (new Collection($this->result, $this->model))->first();
+        return (new Collection($this->result, $this->modelName))->first();
     }
 
     // TODO: nullに対応
-    public function where($column, $value, $operator = "=", $model = null)
+    public function where($column, $value, $operator = "=", $model_name = null)
     {
-        if ($model) {
-            $this->table = $this->resolveTableName($model);
-            $this->model = $model;
+        if ($model_name) {
+            $this->modelName = $model_name;
+            $this->table = $this->resolveTableName();
         }
 
         if (is_null($this->sql)) {
@@ -57,10 +58,10 @@ class DB
         return $this;
     }
 
-    private function resolveTableName($model)
+    private function resolveTableName()
     {
         // TODO: esなどへの対応
-        return lcfirst($model) . "s";
+        return lcfirst($this->modelName) . "s";
     }
 
     private function run()
@@ -78,7 +79,7 @@ class DB
     public function get()
     {
         $this->run();
-        return new Collection($this->result, $this->model);
+        return new Collection($this->result, $this->modelName);
     }
 
     private function resolveType($value)
