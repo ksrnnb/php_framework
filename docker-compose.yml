@@ -10,7 +10,6 @@ services:
     depends_on:
       - php
 
-
   php:
     build: ./docker/php
     volumes:
@@ -21,11 +20,14 @@ services:
       - db
 
   db:
-    image: mysql:8.0
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-time-zone=Asia/Tokyo
+    image: mariadb:10.6
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
     environment:
       MYSQL_DATABASE: framework
+      MYSQL_ROOT_HOST: "%"
       MYSQL_ROOT_PASSWORD: password
+      TZ: Asia/Tokyo
     ports:
       - "3306:3306"
     volumes:
